@@ -1,0 +1,274 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime, timedelta
+import requests
+import io
+import time
+import fitz  # PyMuPDF
+import tempfile
+import os
+import json
+import re  # Added for parsing regex
+from gradio_client import Client, handle_file
+
+# --- Configuration ---
+# API Endpoint for the OCR Model
+OCR_API_URL = "http://10.21.138.21:7860/"
+
+def process_file_for_ocr(uploaded_file):
+    """
+    Converts PDF to Image (JPEG) if necessary, otherwise returns image bytes.
+    Returns: (file_bytes, mime_type, is_converted)
+    """
+    file_bytes = uploaded_file.getvalue()
+    file_type = uploaded_file.type
+
+    if file_type == "application/pdf":
+        try:
+            with fitz.open(stream=file_bytes, filetype="pdf") as doc:
+                if doc.page_count > 0:
+                    page = doc.load_page(0)
+                    pix = page.get_pixmap() 
+                    img_bytes = pix.tobytes("jpeg")
+                    return img_bytes, "image/jpeg", True
+                else:
+                    st.error("Uploaded PDF has no pages.")
+                    return None, None, False
+        except Exception as e:
+            st.error(f"Error converting PDF to Image using PyMuPDF: {e}")
+            return None, None, False
+    
+    return file_bytes, file_type, False
+
+def parse_ocr_text_to_dict(text):
+    """
+    Parses raw OCR text using Regex to extract specific fields into a dictionary.
+    """
+    data = {}
+    
+    # Helper function for regex extraction
+    def extract_field(pattern, text_block):
+        match = re.search(pattern, text_block, re.IGNORECASE)
+        return match.group(1).strip() if match else None
+
+    # 1. Certificate Number
+    # Pattern looks for "Certificate No." followed by text until newline or forward slash if needed
+    data["Certificate Number"] = extract_field(r"Certificate No\.?\s*([A-Za-z0-9/]+)", text)
+
+    # 2. Welder Name
+    # Looks for "Welder's Name:" or "Name:"
+    data["Welder Name"] = extract_field(r"Welder[’']?s Name[:\s]*([^\n]+)", text)
+    # Clean up if extracted line contains "Date of Birth" (sometimes lines merge)
+    if data["Welder Name"] and "Date of Birth" in data["Welder Name"]:
+        data["Welder Name"] = data["Welder Name"].split("Date of Birth")[0].strip()
+
+    # 3. Identification Number
+    data["Identification Number"] = extract_field(r"Identification No[:\s]*([^\n]+)", text)
+
+    # 4. Employer Name
+    # Extracts everything after "Employer’s name and address:" until the comma or newline
+    employer_full = extract_field(r"Employer[’']?s name(?: and address)?[:\s]*([^\n]+)", text)
+    if employer_full:
+        # Often the address follows a comma, we just want the name usually
+        data["Employer Name"] = employer_full.split(',')[0].strip()
+    else:
+        data["Employer Name"] = ""
+
+    # 5. WPS Number
+    data["WPS Number"] = extract_field(r"WPS/pWPS No[:\s]*([^\n]+)", text)
+
+    # 6. Date of Initial Approval
+    data["Date of Initial Approval"] = extract_field(r"Date of initial approval[:\s]*([^\n]+)", text)
+
+    # 7. Valid Upto Date
+    # Looks for "valid until" at the end of the cert
+    data["Valid Upto Date"] = extract_field(r"valid until\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})", text)
+    
+    return data
+
+def call_ocr_api(file_bytes, file_name, file_type):
+    """
+    Sends the file to the OCR API via Gradio Client and returns the extracted JSON data and time taken.
+    """
+    start_time = time.time()
+    temp_file_path = None
+    
+    try:
+        # 1. Save bytes to a temporary file
+        suffix = "." + file_name.split('.')[-1] if '.' in file_name else ".jpg"
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            temp_file.write(file_bytes)
+            temp_file_path = temp_file.name
+
+        # 2. Initialize Client
+        client = Client(OCR_API_URL)
+        
+        # 3. Call API
+        result = client.predict(
+            image=handle_file(temp_file_path),
+            model_size="Gundam (Recommended)",
+            task_type="📝 Free OCR",
+            ref_text="", 
+            api_name="/process_ocr_task"
+        )
+        
+        elapsed_time = time.time() - start_time
+        
+        # 4. Process Result
+        # The result[0] is raw text. We must parse it.
+        raw_text = result[0]
+        
+        # Parse the raw text into the dictionary structure expected by the UI
+        structured_data = parse_ocr_text_to_dict(raw_text)
+        
+        # Add raw text for debugging if needed
+        structured_data["raw_text"] = raw_text
+        
+        return structured_data, elapsed_time
+            
+    except Exception as e:
+        st.error(f"An error occurred during extraction: {e}")
+        return {}, time.time() - start_time
+        
+    finally:
+        if temp_file_path and os.path.exists(temp_file_path):
+            try:
+                os.remove(temp_file_path)
+            except Exception:
+                pass
+
+def render_welder_qualification_tab():
+    st.header("Welder Qualification Management")
+    st.subheader("Upload New Welder Qualification Certificate")
+    
+    with st.form("upload_cert_form", clear_on_submit=False): 
+        uploaded_file = st.file_uploader("Upload Certificate (PDF, JPG, PNG)", type=["pdf", "jpg", "png", "jpeg"])
+        
+        if 'extracted_welder_data' not in st.session_state:
+            st.session_state.extracted_welder_data = {}
+        if 'extraction_time' not in st.session_state:
+            st.session_state.extraction_time = None
+
+        if uploaded_file:
+            current_file_name = uploaded_file.name
+            last_file_name = st.session_state.get('last_welder_uploaded_file', '')
+            
+            if current_file_name != last_file_name:
+                status_container = st.empty()
+                status_container.info("Processing file... Please wait.")
+                
+                processed_bytes, mime_type, converted = process_file_for_ocr(uploaded_file)
+                
+                if processed_bytes:
+                    if converted:
+                        status_container.info("PDF converted to Image. Sending to OCR model...")
+                    else:
+                        status_container.info("Sending Image to OCR model...")
+                    
+                    extracted_data, duration = call_ocr_api(processed_bytes, current_file_name, mime_type)
+                    
+                    st.session_state.extracted_welder_data = extracted_data
+                    st.session_state.extraction_time = duration
+                    st.session_state.last_welder_uploaded_file = current_file_name
+                    st.session_state.uploaded_welder_file_obj = uploaded_file 
+                    
+                    status_container.success(f"Extraction Complete! Time taken: {duration:.2f} seconds")
+                else:
+                    status_container.error("File processing failed.")
+
+        ext_data = st.session_state.extracted_welder_data
+        
+        if st.session_state.extraction_time:
+            st.caption(f"⏱️ Data extracted in {st.session_state.extraction_time:.2f} seconds")
+
+        # --- Form Fields ---
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            cert_no = st.text_input("Certificate Number", value=ext_data.get("Certificate Number", ""))
+            welder_name = st.text_input("Welder's Name", value=ext_data.get("Welder Name", ""))
+            id_no = st.text_input("Identification Number", value=ext_data.get("Identification Number", ""))
+            wps_no = st.text_input("WPS Number", value=ext_data.get("WPS Number", ""))
+
+        with col2:
+            employer = st.text_input("Employer's Name", value=ext_data.get("Employer Name", ""))
+            
+            def parse_date_val(date_str):
+                if not date_str: return datetime.now().date()
+                try:
+                    return pd.to_datetime(date_str).date()
+                except:
+                    return datetime.now().date()
+
+            init_approval_val = parse_date_val(ext_data.get("Date of Initial Approval"))
+            valid_upto_val = parse_date_val(ext_data.get("Valid Upto Date"))
+
+            init_date = st.date_input("Date of Initial Approval", value=init_approval_val)
+            valid_date = st.date_input("Valid Upto Date", value=valid_upto_val)
+
+        submit_btn = st.form_submit_button("Save Qualification")
+        
+        if submit_btn:
+            if not uploaded_file:
+                st.error("No file uploaded.")
+            elif not cert_no or not welder_name:
+                st.error("Essential fields (Certificate No, Name) are missing.")
+            else:
+                if 'welder_certs' not in st.session_state:
+                    st.session_state.welder_certs = []
+
+                st.session_state.welder_certs.append({
+                    "certificate_number": cert_no,
+                    "welder_name": welder_name,
+                    "identification_number": id_no,
+                    "employer_name": employer,
+                    "wps_number": wps_no,
+                    "initial_approval_date": init_date.isoformat(),
+                    "valid_upto_date": valid_date.isoformat(),
+                    "file_name": uploaded_file.name
+                })
+                
+                st.session_state.extracted_welder_data = {}
+                st.session_state.extraction_time = None
+                st.session_state.last_welder_uploaded_file = None
+                st.success("Qualification Saved Successfully!")
+                st.rerun()
+
+    st.markdown("---")
+    st.subheader("Existing Qualifications")
+    
+    if 'welder_certs' in st.session_state and st.session_state.welder_certs:
+        df = pd.DataFrame(st.session_state.welder_certs)
+        
+        if 'valid_upto_date' in df.columns:
+            df['valid_upto_date'] = pd.to_datetime(df['valid_upto_date']).dt.date
+            df['status'] = df['valid_upto_date'].apply(
+                lambda x: "Expired" if x < datetime.now().date() 
+                else ("Expiring Soon" if x < datetime.now().date() + timedelta(days=30) 
+                else "Valid")
+            )
+        
+            for _, row in df[df['status'].isin(["Expired", "Expiring Soon"])].iterrows():
+                cls = "alert-card-expired" if row['status'] == "Expired" else "alert-card-expiring"
+                st.markdown(
+                    f"<div class='{cls}'>Alert: {row.get('welder_name', 'Unknown')} ({row.get('certificate_number', 'N/A')}) "
+                    f"is {row['status']} (Expires: {row['valid_upto_date']})</div>", 
+                    unsafe_allow_html=True
+                )
+            
+            st.dataframe(
+                df[[
+                    "certificate_number", "welder_name", "identification_number", 
+                    "employer_name", "wps_number", "valid_upto_date", "status"
+                ]],
+                width="stretch"
+            )
+            
+            with st.expander("Manage Records"):
+                idx_to_delete = st.selectbox("Select Record to Delete", options=range(len(df)), format_func=lambda x: f"{df.iloc[x]['welder_name']} - {df.iloc[x]['certificate_number']}")
+                if st.button("Delete Selected Record"):
+                    st.session_state.welder_certs.pop(idx_to_delete)
+                    st.rerun()
+    else:
+        st.info("No qualification records found.")

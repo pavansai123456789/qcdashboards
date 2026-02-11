@@ -1,0 +1,120 @@
+2025-06-04 10:55:48,755 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:55:48.755253
+2025-06-04 10:55:48,755 - DEBUG - Setting page config
+2025-06-04 10:55:48,756 - DEBUG - Page config set successfully
+2025-06-04 10:55:48,756 - DEBUG - Applying custom CSS
+2025-06-04 10:55:48,757 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:55:48,758 - DEBUG - Initializing session state
+2025-06-04 10:55:48,758 - DEBUG - Session state initialized successfully
+2025-06-04 10:55:48,758 - DEBUG - Entering main execution block
+2025-06-04 10:55:48,759 - DEBUG - Rendering login page
+2025-06-04 10:55:48,763 - DEBUG - Login page rendered successfully
+2025-06-04 10:55:48,764 - DEBUG - App execution completed
+2025-06-04 10:56:12,638 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:56:12.638135
+2025-06-04 10:56:12,638 - DEBUG - Setting page config
+2025-06-04 10:56:12,639 - DEBUG - Page config set successfully
+2025-06-04 10:56:12,639 - DEBUG - Applying custom CSS
+2025-06-04 10:56:12,641 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:56:12,642 - DEBUG - Initializing session state
+2025-06-04 10:56:12,643 - DEBUG - Session state initialized successfully
+2025-06-04 10:56:12,643 - DEBUG - Entering main execution block
+2025-06-04 10:56:12,643 - DEBUG - Rendering login page
+2025-06-04 10:56:12,647 - DEBUG - Login page rendered successfully
+2025-06-04 10:56:12,647 - DEBUG - App execution completed
+2025-06-04 10:56:13,925 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:56:13.925915
+2025-06-04 10:56:13,926 - DEBUG - Setting page config
+2025-06-04 10:56:13,928 - DEBUG - Page config set successfully
+2025-06-04 10:56:13,930 - DEBUG - Applying custom CSS
+2025-06-04 10:56:13,932 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:56:13,932 - DEBUG - Initializing session state
+2025-06-04 10:56:13,933 - DEBUG - Session state initialized successfully
+2025-06-04 10:56:13,934 - DEBUG - Entering main execution block
+2025-06-04 10:56:13,934 - DEBUG - Rendering login page
+2025-06-04 10:56:13,940 - DEBUG - Login page rendered successfully
+2025-06-04 10:56:13,940 - DEBUG - App execution completed
+2025-06-04 10:56:14,574 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:56:14.574878
+2025-06-04 10:56:14,575 - DEBUG - Setting page config
+2025-06-04 10:56:14,575 - DEBUG - Page config set successfully
+2025-06-04 10:56:14,576 - DEBUG - Applying custom CSS
+2025-06-04 10:56:14,577 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:56:14,577 - DEBUG - Initializing session state
+2025-06-04 10:56:14,578 - DEBUG - Session state initialized successfully
+2025-06-04 10:56:14,578 - DEBUG - Entering main execution block
+2025-06-04 10:56:14,578 - DEBUG - Rendering login page
+2025-06-04 10:56:14,583 - DEBUG - Login page rendered successfully
+2025-06-04 10:56:14,583 - DEBUG - App execution completed
+2025-06-04 10:56:15,190 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:56:15.190058
+2025-06-04 10:56:15,190 - DEBUG - Setting page config
+2025-06-04 10:56:15,191 - DEBUG - Page config set successfully
+2025-06-04 10:56:15,191 - DEBUG - Applying custom CSS
+2025-06-04 10:56:15,193 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:56:15,193 - DEBUG - Initializing session state
+2025-06-04 10:56:15,195 - DEBUG - Session state initialized successfully
+2025-06-04 10:56:15,195 - DEBUG - Entering main execution block
+2025-06-04 10:56:15,195 - DEBUG - Rendering login page
+2025-06-04 10:56:15,201 - DEBUG - Login page rendered successfully
+2025-06-04 10:56:15,202 - DEBUG - App execution completed
+2025-06-04 10:59:52,338 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:59:52.338853
+2025-06-04 10:59:52,339 - DEBUG - Checking Streamlit version
+2025-06-04 10:59:52,339 - INFO - Streamlit version: 1.45.1
+2025-06-04 10:59:52,339 - DEBUG - Setting page config
+2025-06-04 10:59:52,340 - DEBUG - Page config set successfully
+2025-06-04 10:59:52,340 - DEBUG - Applying custom CSS
+2025-06-04 10:59:52,341 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:59:52,342 - DEBUG - Initializing session state
+2025-06-04 10:59:52,342 - DEBUG - Session state initialized successfully: test_mode=True, login_status=False
+2025-06-04 10:59:52,343 - DEBUG - Entering main execution block
+2025-06-04 10:59:52,343 - DEBUG - Rendering login page
+2025-06-04 10:59:52,347 - DEBUG - Login page rendered successfully
+2025-06-04 10:59:52,347 - DEBUG - App execution completed
+2025-06-04 10:59:56,056 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 10:59:56.056351
+2025-06-04 10:59:56,056 - DEBUG - Checking Streamlit version
+2025-06-04 10:59:56,057 - INFO - Streamlit version: 1.45.1
+2025-06-04 10:59:56,057 - DEBUG - Setting page config
+2025-06-04 10:59:56,058 - DEBUG - Page config set successfully
+2025-06-04 10:59:56,060 - DEBUG - Applying custom CSS
+2025-06-04 10:59:56,063 - DEBUG - Custom CSS applied successfully
+2025-06-04 10:59:56,064 - DEBUG - Initializing session state
+2025-06-04 10:59:56,065 - DEBUG - Session state initialized successfully: test_mode=True, login_status=False
+2025-06-04 10:59:56,065 - DEBUG - Entering main execution block
+2025-06-04 10:59:56,065 - DEBUG - Rendering login page
+2025-06-04 10:59:56,071 - DEBUG - Login page rendered successfully
+2025-06-04 10:59:56,072 - DEBUG - App execution completed
+2025-06-04 11:00:17,136 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 11:00:17.136563
+2025-06-04 11:00:17,136 - DEBUG - Checking Streamlit version
+2025-06-04 11:00:17,137 - INFO - Streamlit version: 1.45.1
+2025-06-04 11:00:17,137 - DEBUG - Setting page config
+2025-06-04 11:00:17,177 - DEBUG - Page config set successfully
+2025-06-04 11:00:17,178 - DEBUG - Applying custom CSS
+2025-06-04 11:00:17,603 - DEBUG - Custom CSS applied successfully
+2025-06-04 11:00:17,603 - DEBUG - Initializing session state
+2025-06-04 11:00:17,604 - DEBUG - Session state initialized successfully: test_mode=True, login_status=False
+2025-06-04 11:00:17,604 - DEBUG - Entering main execution block
+2025-06-04 11:00:17,605 - DEBUG - Rendering login page
+2025-06-04 11:00:17,609 - DEBUG - Login page rendered successfully
+2025-06-04 11:00:17,609 - DEBUG - App execution completed
+2025-06-04 11:00:41,879 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 11:00:41.879549
+2025-06-04 11:00:41,879 - DEBUG - Checking Streamlit version
+2025-06-04 11:00:41,880 - INFO - Streamlit version: 1.45.1
+2025-06-04 11:00:41,880 - DEBUG - Setting page config
+2025-06-04 11:00:41,881 - DEBUG - Page config set successfully
+2025-06-04 11:00:41,882 - DEBUG - Applying custom CSS
+2025-06-04 11:00:41,883 - DEBUG - Custom CSS applied successfully
+2025-06-04 11:00:41,884 - DEBUG - Initializing session state
+2025-06-04 11:00:41,884 - DEBUG - Session state initialized successfully: test_mode=True, login_status=False
+2025-06-04 11:00:41,884 - DEBUG - Entering main execution block
+2025-06-04 11:00:41,885 - DEBUG - Rendering login page
+2025-06-04 11:00:41,890 - DEBUG - Login page rendered successfully
+2025-06-04 11:00:41,890 - DEBUG - App execution completed
+2025-06-04 11:00:47,558 - DEBUG - Starting Welding Management Dashboard app at 2025-06-04 11:00:47.558861
+2025-06-04 11:00:47,559 - DEBUG - Checking Streamlit version
+2025-06-04 11:00:47,559 - INFO - Streamlit version: 1.45.1
+2025-06-04 11:00:47,559 - DEBUG - Setting page config
+2025-06-04 11:00:47,560 - DEBUG - Page config set successfully
+2025-06-04 11:00:47,560 - DEBUG - Applying custom CSS
+2025-06-04 11:00:47,562 - DEBUG - Custom CSS applied successfully
+2025-06-04 11:00:47,562 - DEBUG - Initializing session state
+2025-06-04 11:00:47,563 - DEBUG - Session state initialized successfully: test_mode=True, login_status=False
+2025-06-04 11:00:47,564 - DEBUG - Entering main execution block
+2025-06-04 11:00:47,564 - DEBUG - Rendering login page
+2025-06-04 11:00:47,569 - DEBUG - Login page rendered successfully
+2025-06-04 11:00:47,569 - DEBUG - App execution completed
